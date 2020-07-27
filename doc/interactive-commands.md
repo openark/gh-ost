@@ -17,6 +17,7 @@ Both interfaces may serve at the same time. Both respond to simple text command,
 - `help`: shows a brief list of available commands
 - `status`: returns a detailed status summary of migration progress and configuration
 - `sup`: returns a brief status summary of migration progress
+- `state`: returns `Running` or `Complete`. For the latter, see `--postpone-shutdown-flag-file`
 - `coordinates`: returns recent (though not exactly up to date) binary log coordinates of the inspected server
 - `chunk-size=<newsize>`: modify the `chunk-size`; applies on next running copy-iteration
 - `dml-batch-size=<newsize>`: modify the `dml-batch-size`; applies on next applying of binary log events
