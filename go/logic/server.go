@@ -146,6 +146,7 @@ func (this *Server) applyServerCommand(command string, writer *bufio.Writer) (pr
 			fmt.Fprint(writer, `available commands:
 status                               # Print a detailed status message
 sup                                  # Print a short status message
+state                                # Print Running|Complete
 coordinates													 # Print the currently inspected coordinates
 chunk-size=<newsize>                 # Set a new chunk-size
 dml-batch-size=<newsize>             # Set a new dml-batch-size
@@ -169,6 +170,11 @@ help                                 # This message
 		return ForcePrintStatusOnlyRule, nil
 	case "info", "status":
 		return ForcePrintStatusAndHintRule, nil
+	case "state":
+		{
+			fmt.Fprintf(writer, "%+v\n", this.migrationContext.GetMigrationState())
+			return NoPrintStatusRule, nil
+		}
 	case "coordinates":
 		{
 			if argIsQuestion || arg == "" {

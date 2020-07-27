@@ -419,6 +419,18 @@ func (this *Migrator) Migrate() (err error) {
 	if err := this.hooksExecutor.onSuccess(); err != nil {
 		return err
 	}
+	this.sleepWhileTrue(
+		func() (bool, error) {
+			if this.migrationContext.PostponeShutdownFlagFile == "" {
+				return false, nil
+			}
+			if base.FileExists(this.migrationContext.PostponeShutdownFlagFile) {
+				// Postpone file defined and exists!
+				return true, nil
+			}
+			return false, nil
+		},
+	)
 	this.migrationContext.Log.Infof("Done migrating %s.%s", sql.EscapeName(this.migrationContext.DatabaseName), sql.EscapeName(this.migrationContext.OriginalTableName))
 	return nil
 }
