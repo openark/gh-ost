@@ -23,6 +23,7 @@ const (
 // ConnectionConfig is the minimal configuration required to connect to a MySQL server
 type ConnectionConfig struct {
 	Key        InstanceKey
+	Socket     string
 	User       string
 	Password   string
 	ImpliedKey *InstanceKey
@@ -41,6 +42,7 @@ func NewConnectionConfig() *ConnectionConfig {
 func (this *ConnectionConfig) DuplicateCredentials(key InstanceKey) *ConnectionConfig {
 	config := &ConnectionConfig{
 		Key:       key,
+		Socket:    this.Socket,
 		User:      this.User,
 		Password:  this.Password,
 		tlsConfig: this.tlsConfig,
@@ -116,5 +118,9 @@ func (this *ConnectionConfig) GetDBUri(databaseName string) string {
 	if this.tlsConfig != nil {
 		tlsOption = TLS_CONFIG_KEY
 	}
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?interpolateParams=%t&autocommit=true&charset=utf8mb4,utf8,latin1&tls=%s", this.User, this.Password, hostname, this.Key.Port, databaseName, interpolateParams, tlsOption)
+	location := fmt.Sprintf("tcp(%s:%d)", hostname, this.Key.Port)
+	if this.Socket != "" {
+		location = fmt.Sprintf("unix(%s)", this.Socket)
+	}
+	return fmt.Sprintf("%s:%s@%s/%s?interpolateParams=%t&autocommit=true&charset=utf8mb4,utf8,latin1&tls=%s", this.User, this.Password, location, databaseName, interpolateParams, tlsOption)
 }

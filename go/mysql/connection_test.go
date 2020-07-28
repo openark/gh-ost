@@ -20,6 +20,7 @@ func init() {
 func TestNewConnectionConfig(t *testing.T) {
 	c := NewConnectionConfig()
 	test.S(t).ExpectEquals(c.Key.Hostname, "")
+	test.S(t).ExpectEquals(c.Socket, "")
 	test.S(t).ExpectEquals(c.Key.Port, 0)
 	test.S(t).ExpectEquals(c.ImpliedKey.Hostname, "")
 	test.S(t).ExpectEquals(c.ImpliedKey.Port, 0)
@@ -30,6 +31,7 @@ func TestNewConnectionConfig(t *testing.T) {
 func TestDuplicateCredentials(t *testing.T) {
 	c := NewConnectionConfig()
 	c.Key = InstanceKey{Hostname: "myhost", Port: 3306}
+	c.Socket = "/tmp/my.sock"
 	c.User = "gromit"
 	c.Password = "penguin"
 	c.tlsConfig = &tls.Config{
@@ -42,6 +44,7 @@ func TestDuplicateCredentials(t *testing.T) {
 	test.S(t).ExpectEquals(dup.Key.Port, 3310)
 	test.S(t).ExpectEquals(dup.ImpliedKey.Hostname, "otherhost")
 	test.S(t).ExpectEquals(dup.ImpliedKey.Port, 3310)
+	test.S(t).ExpectEquals(dup.Socket, "/tmp/my.sock")
 	test.S(t).ExpectEquals(dup.User, "gromit")
 	test.S(t).ExpectEquals(dup.Password, "penguin")
 	test.S(t).ExpectEquals(dup.tlsConfig, c.tlsConfig)
@@ -63,13 +66,24 @@ func TestDuplicate(t *testing.T) {
 }
 
 func TestGetDBUri(t *testing.T) {
-	c := NewConnectionConfig()
-	c.Key = InstanceKey{Hostname: "myhost", Port: 3306}
-	c.User = "gromit"
-	c.Password = "penguin"
+	{
+		c := NewConnectionConfig()
+		c.Key = InstanceKey{Hostname: "myhost", Port: 3306}
+		c.User = "gromit"
+		c.Password = "penguin"
 
-	uri := c.GetDBUri("test")
-	test.S(t).ExpectEquals(uri, "gromit:penguin@tcp(myhost:3306)/test?interpolateParams=true&autocommit=true&charset=utf8mb4,utf8,latin1&tls=false")
+		uri := c.GetDBUri("test")
+		test.S(t).ExpectEquals(uri, "gromit:penguin@tcp(myhost:3306)/test?interpolateParams=true&autocommit=true&charset=utf8mb4,utf8,latin1&tls=false")
+	}
+	{
+		c := NewConnectionConfig()
+		c.Socket = "/tmp/mysql.sock"
+		c.User = "gromit"
+		c.Password = "penguin"
+
+		uri := c.GetDBUri("test")
+		test.S(t).ExpectEquals(uri, "gromit:penguin@unix(/tmp/mysql.sock)/test?interpolateParams=true&autocommit=true&charset=utf8mb4,utf8,latin1&tls=false")
+	}
 }
 
 func TestGetDBUriWithTLSSetup(t *testing.T) {
