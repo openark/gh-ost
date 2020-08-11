@@ -84,6 +84,7 @@ type MigrationContext struct {
 
 	CountTableRows           bool
 	ConcurrentCountTableRows bool
+	ChecksumData             bool
 	AllowedRunningOnMaster   bool
 	AllowedMasterMaster      bool
 	SwitchToRowBinlogFormat  bool
@@ -179,6 +180,9 @@ type MigrationContext struct {
 	pointOfInterestTimeMutex               *sync.Mutex
 	CurrentLag                             int64
 	currentProgress                        uint64
+	PendingChecksumComparisons             int64
+	SuccessfulChecksumComparisons          int64
+	SubmittedChecksumComparisons           int64
 	ThrottleHTTPStatusCode                 int64
 	controlReplicasLagResult               mysql.ReplicationLagResult
 	TotalRowsCopied                        int64
@@ -207,6 +211,7 @@ type MigrationContext struct {
 	GhostTableVirtualColumns         *sql.ColumnList
 	GhostTableUniqueKeys             [](*sql.UniqueKey)
 	UniqueKey                        *sql.UniqueKey
+	GhostUniqueKey                   *sql.UniqueKey
 	SharedColumns                    *sql.ColumnList
 	ColumnRenameMap                  map[string]string
 	DroppedColumnsMap                map[string]bool
