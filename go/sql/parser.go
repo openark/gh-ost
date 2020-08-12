@@ -18,19 +18,19 @@ var (
 	renameTableRegexp                    = regexp.MustCompile(`(?i)\brename\s+(to|as)\s+`)
 	alterTableExplicitSchemaTableRegexps = []*regexp.Regexp{
 		// ALTER TABLE `scm`.`tbl` something
-		regexp.MustCompile(`(?i)\balter\s+(online\s+|)table\s+` + "`" + `([^` + "`" + `]+)` + "`" + `[.]` + "`" + `([^` + "`" + `]+)` + "`" + `\s+(.*$)`),
+		regexp.MustCompile(`(?i)\balter\s+(with_ghost\s+|)table\s+` + "`" + `([^` + "`" + `]+)` + "`" + `[.]` + "`" + `([^` + "`" + `]+)` + "`" + `\s+(.*$)`),
 		// ALTER TABLE `scm`.tbl something
-		regexp.MustCompile(`(?i)\balter\s+(online\s+|)table\s+` + "`" + `([^` + "`" + `]+)` + "`" + `[.]([\S]+)\s+(.*$)`),
+		regexp.MustCompile(`(?i)\balter\s+(with_ghost\s+|)table\s+` + "`" + `([^` + "`" + `]+)` + "`" + `[.]([\S]+)\s+(.*$)`),
 		// ALTER TABLE scm.`tbl` something
-		regexp.MustCompile(`(?i)\balter\s+(online\s+|)table\s+([\S]+)[.]` + "`" + `([^` + "`" + `]+)` + "`" + `\s+(.*$)`),
+		regexp.MustCompile(`(?i)\balter\s+(with_ghost\s+|)table\s+([\S]+)[.]` + "`" + `([^` + "`" + `]+)` + "`" + `\s+(.*$)`),
 		// ALTER TABLE scm.tbl something
-		regexp.MustCompile(`(?i)\balter\s+(online\s+|)table\s+([\S]+)[.]([\S]+)\s+(.*$)`),
+		regexp.MustCompile(`(?i)\balter\s+(with_ghost\s+|)table\s+([\S]+)[.]([\S]+)\s+(.*$)`),
 	}
 	alterTableExplicitTableRegexps = []*regexp.Regexp{
 		// ALTER TABLE `tbl` something
-		regexp.MustCompile(`(?i)\balter\s+(online\s+|)table\s+` + "`" + `([^` + "`" + `]+)` + "`" + `\s+(.*$)`),
+		regexp.MustCompile(`(?i)\balter\s+(with_ghost\s+|)table\s+` + "`" + `([^` + "`" + `]+)` + "`" + `\s+(.*$)`),
 		// ALTER TABLE tbl something
-		regexp.MustCompile(`(?i)\balter\s+(online\s+|)table\s+([\S]+)\s+(.*$)`),
+		regexp.MustCompile(`(?i)\balter\s+(with_ghost\s+|)table\s+([\S]+)\s+(.*$)`),
 	}
 )
 
