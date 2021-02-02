@@ -36,6 +36,14 @@ const (
 
 type CutOver int
 
+type MigrationState string
+
+const (
+	MigrationStateRunning  MigrationState = "Running"
+	MigrationStateComplete MigrationState = "Complete"
+	MigrationStateFailed   MigrationState = "Failed"
+)
+
 const (
 	CutOverAtomic CutOver = iota
 	CutOverTwoStep
@@ -130,6 +138,7 @@ type MigrationContext struct {
 	CriticalLoadIntervalMilliseconds    int64
 	CriticalLoadHibernateSeconds        int64
 	PostponeCutOverFlagFile             string
+	PostponeShutdownFlagFile            string
 	CutOverLockTimeoutSeconds           int64
 	CutOverExponentialBackoff           bool
 	ExponentialBackoffMaxInterval       int64
@@ -729,6 +738,13 @@ func (this *MigrationContext) AddThrottleControlReplicaKey(key mysql.InstanceKey
 
 	this.throttleControlReplicaKeys.AddKey(key)
 	return nil
+}
+
+func (this *MigrationContext) GetMigrationState() MigrationState {
+	if atomic.LoadInt64(&this.CutOverCompleteFlag) > 0 {
+		return MigrationStateComplete
+	}
+	return MigrationStateRunning
 }
 
 // ApplyCredentials sorts out the credentials between the config file and the CLI flags

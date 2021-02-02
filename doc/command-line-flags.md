@@ -173,6 +173,10 @@ Indicate a file name, such that the final [cut-over](cut-over.md) step does not 
 When this flag is set, `gh-ost` expects the file to exist on startup, or else tries to create it. `gh-ost` exits with error if the file does not exist and `gh-ost` is unable to create it.
 With this flag set, the migration will cut-over upon deletion of the file or upon `cut-over` [interactive command](interactive-commands.md).
 
+### postpone-shutdown-flag-file
+
+If indicated file exists, and assuming execution is successful, `gh-ost` will wait after cut-over, and after running the success hooks, instead of exiting. This can be useful in state based environments where we may wish to ask `gh-ost` wat the state of the migration is, as opposed to assuming it reports the state via hooks. This gives a controller/operator the chance to communicate to `gh-ost` and confirm that the migration is successful. See also the `state` server command.
+
 ### replica-server-id
 
 Defaults to 99999. If you run multiple migrations then you must provide a different, unique `--replica-server-id` for each `gh-ost` process.
