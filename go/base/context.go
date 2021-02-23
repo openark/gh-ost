@@ -225,6 +225,8 @@ type MigrationContext struct {
 	recentBinlogCoordinates mysql.BinlogCoordinates
 
 	Log Logger
+
+	IsAddUniqueKey bool
 }
 
 type Logger interface {
