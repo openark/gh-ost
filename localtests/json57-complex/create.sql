@@ -16,7 +16,7 @@ create event gh_ost_test
   enable
   do
 begin
-  insert into json_table (id, json2) values (
+  insert ignore into json_table (id, json2) values (
     1, '{"our_string": "complete",  "json_in_json": [{"2021-05-27 08:36:59 -0700": [null, "complete"]}]}'
   );
   update json_table
