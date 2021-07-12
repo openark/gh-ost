@@ -42,8 +42,8 @@ func buildColumnsPreparedValues(columns *ColumnList) []string {
 			token = fmt.Sprintf("ELT(?, %s)", column.EnumValues)
 		} else if column.Type == JSONColumnType {
 			token = "convert(? using utf8mb4)"
-		} else if column.charsetConversion {
-			token = fmt.Sprintf("convert(? using %s)", column.Charset)
+		} else if column.charsetConversion != nil {
+			token = fmt.Sprintf("convert(convert(? using %s) using %s)", column.charsetConversion.FromCharset, column.charsetConversion.ToCharset)
 		} else {
 			token = "?"
 		}
@@ -116,8 +116,8 @@ func BuildSetPreparedClause(columns *ColumnList) (result string, err error) {
 			setToken = fmt.Sprintf("%s=ELT(?, %s)", EscapeName(column.Name), column.EnumValues)
 		} else if column.Type == JSONColumnType {
 			setToken = fmt.Sprintf("%s=convert(? using utf8mb4)", EscapeName(column.Name))
-		} else if column.charsetConversion {
-			setToken = fmt.Sprintf("%s=convert(? using %s)", EscapeName(column.Name), column.Charset)
+		} else if column.charsetConversion != nil {
+			setToken = fmt.Sprintf("%s=convert(convert(? using %s) using %s)", EscapeName(column.Name), column.charsetConversion.FromCharset, column.charsetConversion.ToCharset)
 		} else {
 			setToken = fmt.Sprintf("%s=?", EscapeName(column.Name))
 		}
